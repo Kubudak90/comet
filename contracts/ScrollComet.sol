@@ -471,8 +471,8 @@ contract ScrollComet is CometMainInterface {
      * @return The price, scaled by `PRICE_SCALE`
      */
     function getPrice(address priceFeed) override public view returns (uint256) {
-        (, int price, , , ) = IPriceFeed(priceFeed).latestRoundData();
-        if (price <= 0) revert BadPrice();
+        (uint80 roundId, int price, , uint256 updatedAt, uint80 answeredInRound) = IPriceFeed(priceFeed).latestRoundData();
+        if (roundId == 0 || price <= 0 || updatedAt == 0 || answeredInRound < roundId) revert BadPrice();
         return uint256(price);
     }
 
